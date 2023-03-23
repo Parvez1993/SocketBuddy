@@ -46,8 +46,8 @@ function Home() {
                                     <label for="floatingInput">Confirm Password</label>
                                 </div>}
                                 {register && <div>
-                                    <label for="formFile" className="form-label">Default file input example</label>
-                                    <input className="form-control" type="file" id="formFile" onChange={e=>postDetails(e.target.files[0])}/>
+                                    <label for="formFile" className="form-label text-white">Select Profile Pic</label>
+                                    <input className="form-control" type="file" id="formFile" onChange={e=>postDetails(e.target.files[0])} placeholder="select profile pic"/>
                                 </div>}
 
                             </div>
