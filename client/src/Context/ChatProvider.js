@@ -10,7 +10,7 @@ export const ChatProvider = ({ children }) => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const userInfo = JSON.parse(JSON.stringify("userInfo"))
+        const userInfo = JSON.parse(localStorage.getItem("userInfo"));
         setUser(userInfo)
 
         if (!userInfo) {
