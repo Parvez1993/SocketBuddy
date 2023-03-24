@@ -1,9 +1,17 @@
 import React from 'react'
 import { Button, Container, Dropdown, Image, Nav, Navbar } from 'react-bootstrap'
+import { useNavigate } from 'react-router-dom'
+import Profile from './Profile'
+
 
 function NavBar({ handleShow, user }) {
+    const navigate = useNavigate()
 
-    console.log("userrrrrrrrrrrrr", user)
+    const handleLogout = () => {
+        localStorage.removeItem('userInfo')
+        navigate('/')
+    }
+
     return (
         <Navbar bg="dark" expand="lg" style={{ height: "6vh" }}>
             <Container fluid>
@@ -36,8 +44,8 @@ function NavBar({ handleShow, user }) {
 
 
                                 <Dropdown.Menu>
-                                    <Dropdown.Item>Profile</Dropdown.Item>
-                                    <Dropdown.Item>Logout</Dropdown.Item>
+                                    <Dropdown.Item><Profile user={user} /></Dropdown.Item>
+                                    <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown>
                             <button type="button" class="icon-button">

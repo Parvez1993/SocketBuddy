@@ -8,17 +8,17 @@ import { useChatStore } from '../Context/ChatProvider'
 function ChatPage() {
   const { user } = useChatStore()
 
-  const [show, setShow] = useState(true);
+  const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  console.log("showwwww", show)
+
 
   return (
     <div style={{ width: "100%" }}>
       <NavBar handleShow={handleShow} user={user} />
-      {user && <SlidingSidebar show={show} handleClose={handleClose} />}
+      {user && <SlidingSidebar show={show} handleClose={handleClose} user={user} />}
       <div className='d-flex justify-content-between bg-danger' style={{ height: "94vh" }}>
         {user && <MyChats />}
         {user && <ChatBox />}

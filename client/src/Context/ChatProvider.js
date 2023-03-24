@@ -16,7 +16,7 @@ export const ChatProvider = ({ children }) => {
         if (!userInfo) {
             navigate("/")
         }
-    }, [])
+    }, [navigate])
 
 
     let value = {
