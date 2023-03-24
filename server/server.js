@@ -30,12 +30,12 @@ app.get('/', (req, res) => {
 })
 
 
-app.use("/api/users",userRouter)
-app.use("/api/chat",chatRouter )
+app.use("/api/users", userRouter)
+app.use("/api/chat", chatRouter)
 
 
-console.log("process.env.JWT_SECRET",process.env.JWT_SECRET)
-console.log("process.env.JWT_SECRET",process.env.JWT_EXPIRES_IN)
+console.log("process.env.JWT_SECRET", process.env.JWT_SECRET)
+console.log("process.env.JWT_SECRET", process.env.JWT_EXPIRES_IN)
 
 //middleware routes
 app.use(notFoundMiddleware);
