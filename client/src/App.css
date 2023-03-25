@@ -1,7 +1,7 @@
 * {
     margin: 0;
     padding: 0;
-    margin:auto;
+
 }
 body{
     height: 100vh;
@@ -107,7 +107,21 @@ body{
   transition: max-height 0.4s ease-out 0.3s;
 }
 
-
+.listItemz{
+  min-width: 100%;
+  cursor: pointer;
+}
 .listItemz:hover{
   background: rgb(88, 85, 131);
+  color:white !important
 }
+
+.mychats:hover{
+  background: rgb(88, 85, 131) !important;
+  color:white !important;
+  cursor: pointer;
+}
+
+
+
+/* -----------------------------------------badge with cross icon--------------------- */

@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { Button, Modal } from 'react-bootstrap';
 
 function Profile({ user }) {
+
+    console.log("Profile user", user)
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
