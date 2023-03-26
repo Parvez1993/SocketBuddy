@@ -278,7 +278,7 @@ function SingleChat() {
 
 
             {loadingMessage ? "loading" : <div>
-                <div style={{ background: "white", height: "70vh", marginTop: "10px" }}>
+                <div style={{ background: "white", height: "70vh", marginTop: "10px", overflow: "scroll" }}>
                     <div className="messages">
                         <ScrollableChat messages={messages} />
                     </div>
