@@ -1,11 +1,16 @@
 import axios from 'axios'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Card, FloatingLabel, Form, Image, Modal } from 'react-bootstrap'
 import { toast, ToastContainer } from 'react-toastify'
 import { useChatStore } from '../Context/ChatProvider'
 import { getSender, getSenderFull } from '../utils/ChatLogics'
 import ChatLoading from './ChatLoading'
 import Profile from './Profile'
+import ScrollableChat from './ScrollableChat'
+import io from "socket.io-client"
+
+const ENDPOINT = "http://localhost:5000";
+let socket, selectedChatCompare
 
 function SingleChat() {
     const { selectedChat, fetchAgain, setFetchAgain, user, setSelectedChat } = useChatStore()
@@ -17,11 +22,106 @@ function SingleChat() {
     const [selectedUsers, setSelectedUsers] = useState([]);
 
 
+    //messages
+    const [messages, setMessages] = useState([]);
+    const [loadingMessage, setLoadingMessage] = useState(false);
+    const [newMessage, setNewMessage] = useState([])
+
+
+    //socket
+    const [socketConnected, setSocketConnected] = useState(false)
+
+
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
 
+    const fetchMessages = async () => {
+        if (!selectedChat) return;
 
+        try {
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${user.token}`,
+                },
+            };
+
+            setLoading(true);
+
+            const { data } = await axios.get(
+                `/api/message/${selectedChat._id}`,
+                config
+            );
+            setMessages(data);
+            setLoadingMessage(false);
+            socket.emit("joinchat", selectedChat._id)
+
+        } catch (error) {
+            toast.error("Failed to Load messages", {
+                position: toast.POSITION.TOP_LEFT
+            });
+        }
+    };
+
+
+    const sendMesageFun = async (event) => {
+        if (event.key === "Enter" && newMessage) {
+            try {
+                const config = {
+                    headers: {
+                        "Content-type": "application/json",
+                        Authorization: `Bearer ${user.token}`,
+                    },
+                };
+                setNewMessage("");
+                const { data } = await axios.post(
+                    "/api/message",
+                    {
+                        content: newMessage,
+                        chatId: selectedChat,
+                    },
+                    config
+                );
+                socket.emit("newMessage", data)
+                setMessages([...messages, data]);
+            } catch (error) {
+                toast.error("Failed to send messages", {
+                    position: toast.POSITION.TOP_LEFT
+                });
+            }
+        }
+    };
+
+
+
+    useEffect(() => {
+        socket = io(ENDPOINT);
+        socket.emit("setup", user);
+        socket.on("connected", () => setSocketConnected(true));
+
+        // eslint-disable-next-line
+    }, []);
+
+    useEffect(() => {
+        fetchMessages()
+        selectedChatCompare = selectedChat
+    }, [selectedChat])
+
+
+    useEffect(() => {
+        socket.on("message recieved", (newMessageRecieved) => {
+
+            console.log("message recieved", newMessageRecieved)
+            if (
+                !selectedChatCompare || // if chat is not selected or doesn't match current chat
+                selectedChatCompare._id !== newMessageRecieved.chat._id
+            ) {
+                return
+            } else {
+                setMessages([...messages, newMessageRecieved]);
+            }
+        });
+    });
 
     const handleGroup = async (userToAdd) => {
         if (selectedChat.users.find((u) => u._id === userToAdd._id)) {
@@ -57,6 +157,7 @@ function SingleChat() {
             setSelectedChat(data);
             setFetchAgain(!fetchAgain);
             setLoading(false);
+
         } catch (error) {
             toast.error(error.message, {
                 position: toast.POSITION.TOP_LEFT
@@ -92,6 +193,7 @@ function SingleChat() {
 
             userData._id === user._id ? setSelectedChat() : setSelectedChat(data);
             setFetchAgain(!fetchAgain);
+            fetchMessages()
             setLoading(false);
         } catch (error) {
             toast.error(error.message, {
@@ -147,6 +249,14 @@ function SingleChat() {
         handleClose()
     };
 
+
+
+    const typingHandler = async (e) => {
+        setNewMessage(e.target.value)
+    }
+
+
+
     return (
         <div style={{ background: "pink", width: "69%" }}>
             {!selectedChat && <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "60vh" }}>Click on someone to chat with</div>}
@@ -164,6 +274,16 @@ function SingleChat() {
                     {getSender(user, selectedChat?.users)}
                     <Button variant="danger"><Profile user={getSenderFull(user, selectedChat?.users)} /></Button>
                 </div>
+            </div>}
+
+
+            {loadingMessage ? "loading" : <div>
+                <div style={{ background: "white", height: "70vh", marginTop: "10px" }}>
+                    <div className="messages">
+                        <ScrollableChat messages={messages} />
+                    </div>
+                </div>
+                <textarea style={{ width: "100%", height: "16vh" }} placeholder='type here' onKeyDown={sendMesageFun} onChange={typingHandler} value={newMessage} />
             </div>}
 
             <Modal

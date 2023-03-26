@@ -124,4 +124,10 @@ body{
 
 
 
-/* -----------------------------------------badge with cross icon--------------------- */
+/* -----------------------------------------messages-------------------- */
+.messages {
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+  scrollbar-width: none;
+}
