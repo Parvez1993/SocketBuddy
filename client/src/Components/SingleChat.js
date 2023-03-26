@@ -10,8 +10,6 @@ import Profile from './Profile'
 function SingleChat() {
     const { selectedChat, fetchAgain, setFetchAgain, user, setSelectedChat } = useChatStore()
     const [show, setShow] = useState(false);
-    const [loadingChat, setLoadingChat] = useState(true)
-    const [loggedUser, setLoggedUser] = useState();
     const [groupName, setGroupName] = useState("")
     const [users, setUsers] = useState([])
     const [searchResults, setSearchResults] = useState([])
@@ -23,20 +21,85 @@ function SingleChat() {
     const handleShow = () => setShow(true);
 
 
-    const handleGroup = (userToAdd) => {
-        if (selectedUsers.includes(userToAdd)) {
-            return toast.error("user already exists", {
+
+
+    const handleGroup = async (userToAdd) => {
+        if (selectedChat.users.find((u) => u._id === userToAdd._id)) {
+            return toast.error("User Already in group!", {
+                position: toast.POSITION.TOP_LEFT
+            });
+
+        }
+        if (selectedChat.groupAdmin._id !== user._id) {
+            return toast.error("Only admins can add someone", {
                 position: toast.POSITION.TOP_LEFT
             });
 
         }
 
-        setSelectedUsers([...selectedUsers, userToAdd]);
+
+        try {
+            setLoading(true);
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${user.token}`,
+                },
+            };
+            const { data } = await axios.put(
+                `/api/chat/groupadd`,
+                {
+                    chatId: selectedChat._id,
+                    userId: userToAdd._id,
+                },
+                config
+            );
+
+            setSelectedChat(data);
+            setFetchAgain(!fetchAgain);
+            setLoading(false);
+        } catch (error) {
+            toast.error(error.message, {
+                position: toast.POSITION.TOP_LEFT
+            });
+            setLoading(false);
+        }
+        setGroupName("");
     };
 
-    const RemoveUser = (data) => {
-        const removeUsers = selectedUsers.filter(e => e._id !== data._id)
-        setSelectedUsers(removeUsers);
+    const RemoveUser = async (userData) => {
+        if (selectedChat.groupAdmin._id !== user._id && userData._id !== user._id) {
+            return toast.error("Only admins can remove someone", {
+                position: toast.POSITION.TOP_LEFT
+            });
+        }
+
+
+        try {
+            setLoading(true);
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${user.token}`,
+                },
+            };
+            const { data } = await axios.put(
+                `/api/chat/remveFromGroup`,
+                {
+                    chatId: selectedChat._id,
+                    userId: userData._id,
+                },
+                config
+            );
+
+            userData._id === user._id ? setSelectedChat() : setSelectedChat(data);
+            setFetchAgain(!fetchAgain);
+            setLoading(false);
+        } catch (error) {
+            toast.error(error.message, {
+                position: toast.POSITION.TOP_LEFT
+            });
+            setLoading(false);
+
+        }
 
     }
 
@@ -84,15 +147,16 @@ function SingleChat() {
         handleClose()
     };
 
-    console.log("selected USERS", selectedUsers)
     return (
         <div style={{ background: "pink", width: "69%" }}>
             {!selectedChat && <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "60vh" }}>Click on someone to chat with</div>}
             {selectedChat.isGroupChat && <div>
                 <div className='bg-white p-3 d-flex justify-content-between'>
                     <h2>{selectedChat.chatName}</h2>
-                    <Button variant="danger" onClick={() => setSelectedChat("")}>X</Button>
-                    <Button variant="secondary" onClick={() => handleShow()}>Options</Button>
+                    <div>
+                        <Button variant="danger" onClick={() => setSelectedChat("")}>X</Button>
+                        <Button variant="secondary" onClick={() => handleShow()}>Options</Button>
+                    </div>
                 </div>
             </div>}
             {selectedChat && !selectedChat.isGroupChat && <div>
@@ -110,7 +174,7 @@ function SingleChat() {
                 style={{ display: "block" }}
             >
                 <Modal.Header closeButton >
-                    <Modal.Title>Create Group Chat</Modal.Title>
+                    <Modal.Title>Update Group Chat</Modal.Title>
                 </Modal.Header>
                 <Modal.Body style={{ display: "block" }}>
 
@@ -159,6 +223,9 @@ function SingleChat() {
                 </Modal.Body>
             </Modal>
             <ToastContainer />
+            {loading && <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>}
         </div>
     )
 }

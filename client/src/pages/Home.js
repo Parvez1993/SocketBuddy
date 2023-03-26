@@ -166,7 +166,7 @@ function Home() {
                                 <div>
                                     <Button type="button" className="btn btn-success my-4" onClick={submitFun}>Submit</Button>
                                 </div>
-                                <ButtonGroup style={{ display: "flex", justifyContent: "space-between" }}>
+                                <ButtonGroup style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                                     <Button variant="danger" onClick={() => {
                                         setRegister(false)
                                         setName(null);
