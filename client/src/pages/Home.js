@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Col, Button, Row, Container, Card, Form, Image, ButtonGroup, Badge, Alert } from "react-bootstrap";
 import "./Home.css"
 import axios from "axios"
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { useChatStore } from '../Context/ChatProvider';
 function Home() {
 
     const [register, setRegister] = useState(true)
@@ -17,7 +18,20 @@ function Home() {
     const [loading, setLoading] = useState(false);
     const [preview, setPreview] = useState(null);
 
+    const { user } = useChatStore()
+
+
+
     const navigate = useNavigate()
+
+    useEffect(() => {
+        if (user) {
+            navigate("/chat")
+        }
+    }, [navigate])
+
+
+
 
     const postDetails = async (pics) => {
         setLoading(true);
@@ -152,7 +166,7 @@ function Home() {
                                 <div>
                                     <Button type="button" className="btn btn-success my-4" onClick={submitFun}>Submit</Button>
                                 </div>
-                                <ButtonGroup style={{ display: "flex", justifyContent: "space-between" }}>
+                                <ButtonGroup style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                                     <Button variant="danger" onClick={() => {
                                         setRegister(false)
                                         setName(null);

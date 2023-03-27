@@ -1,8 +1,133 @@
 * {
     margin: 0;
     padding: 0;
-    margin:auto;
+
 }
 body{
     height: 100vh;
 } 
+
+.icon-button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    color: #333333;
+    background: #dddddd;
+    border: none;
+    outline: none;
+    border-radius: 50%;
+    margin-top: 5px;
+  }
+  
+  .icon-button:hover {
+    cursor: pointer;
+  }
+  
+  .icon-button:active {
+    background: #cccccc;
+  }
+  
+  .icon-button__badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 25px;
+    height: 25px;
+    background: red;
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+  }
+  
+
+
+
+  /* //profile image */
+
+  /* Circle Settings */
+.circle {
+  position: relative;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+}
+.outer-circle {
+  width: 100px;
+  height: 100px;
+  background: rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 3px 4px rgb(77, 77, 77, 0.46);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 15px;
+}
+.inner-circle {
+  width: 85px;
+  height: 85px;
+  border: 3px solid #fff;
+  box-shadow: 0px 0px 3px 2px #dddada inset;
+  z-index: 1;
+  overflow: hidden;
+}
+.inner-circle img {
+  width: 90px;
+  background-size: cover;
+}
+
+.sq {
+  position: absolute;
+  width: 50%;
+  height: 120%;
+  max-height: 0;
+  background: rgb(242 92 5);
+}
+.outer-circle:hover .sq {
+  max-height: 130%;
+}
+/* Circle-1 Animation Settings */
+.circle-1 .sq-1 {
+  top: -5%;
+  right: 0;
+  transition: max-height 0.4s linear 0.3s;
+}
+.circle-1:hover .sq-1 {
+  transition: max-height 0.4s linear 0s;
+}
+.circle-1 .sq-2 {
+  bottom: -5%;
+  left: 0;
+  transition: max-height 0.4s linear 0s;
+}
+.circle-1:hover .sq-2 {
+  transition: max-height 0.4s ease-out 0.3s;
+}
+
+.listItemz{
+  min-width: 100%;
+  cursor: pointer;
+}
+.listItemz:hover{
+  background: rgb(88, 85, 131);
+  color:white !important
+}
+
+.mychats:hover{
+  background: rgb(88, 85, 131) !important;
+  color:white !important;
+  cursor: pointer;
+}
+
+
+
+/* -----------------------------------------messages-------------------- */
+.messages {
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+  scrollbar-width: none;
+}

@@ -4,6 +4,8 @@ const dotenv = require('dotenv');
 const mongoose = require("mongoose");
 const userRouter = require('./routes/userRoute');
 const chatRouter = require('./routes/chatRoute');
+const messageRouter = require('./routes/messageRoutes');
+
 
 const notFoundMiddleware = require("./middleware/notFoundMiddleware.js");
 const errorMiddleware = require("./middleware/error-handler.js");
@@ -30,12 +32,12 @@ app.get('/', (req, res) => {
 })
 
 
-app.use("/api/users",userRouter)
-app.use("/api/chat",chatRouter )
+app.use("/api/users", userRouter)
+app.use("/api/chat", chatRouter)
+app.use("/api/message", messageRouter)
 
-
-console.log("process.env.JWT_SECRET",process.env.JWT_SECRET)
-console.log("process.env.JWT_SECRET",process.env.JWT_EXPIRES_IN)
+console.log("process.env.JWT_SECRET", process.env.JWT_SECRET)
+console.log("process.env.JWT_SECRET", process.env.JWT_EXPIRES_IN)
 
 //middleware routes
 app.use(notFoundMiddleware);
@@ -48,6 +50,44 @@ const server = app.listen(PORT, () => {
 });
 
 
+const io = require("socket.io")(server, {
+    pingTimeout: 60000,
+    cors: {
+        origin: "http://localhost:3000",
+        // credentials: true,
+    },
+});
+
+
+io.on("connection", (socket) => {
+    console.log("Connected to socket.io");
+    socket.on("setup", (userData) => {
+        socket.join(userData._id);
+        socket.emit("connected");
+    });
+
+    socket.on("joinchat", (room) => {
+        socket.join(room);
+        console.log("User Joined Room: " + room);
+    });
+
+    socket.on("newMessage", (newMessageRecieved) => {
+        var chat = newMessageRecieved.chat;
+
+        if (!chat.users) return console.log("chat.users not defined");
+
+        chat.users.forEach((user) => {
+            if (user._id == newMessageRecieved.sender._id) return;
+
+            socket.in(user._id).emit("message recieved", newMessageRecieved);
+        });
+    });
+
+    socket.off("setup", () => {
+        console.log("USER DISCONNECTED");
+        socket.leave(userData._id);
+    });
+});
 process.on('unhandledRejection', (err) => {
     console.log('UNHANDLED REJECTION! Shutting Down...');
     console.log(err.name, err.message);
