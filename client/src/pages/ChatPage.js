@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
-import ChatBox from '../Components/ChatBox';
-import MyChats from '../Components/MyChats';
-import NavBar from '../Components/NavBar';
-import SlidingSidebar from '../Components/SlidingSidebar';
-import { useChatStore } from '../Context/ChatProvider'
+import ChatBox from '../components/ChatBox';
+import MyChats from '../components/MyChats';
+import NavBar from '../components/NavBar';
+import SlidingSidebar from '../components/SlidingSidebar';
+import { useChatStore } from '../Context/ChatProvider';
+
 
 function ChatPage() {
   const { user } = useChatStore()

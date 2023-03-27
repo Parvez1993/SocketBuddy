@@ -8,6 +8,8 @@ import ChatLoading from './ChatLoading'
 import Profile from './Profile'
 import ScrollableChat from './ScrollableChat'
 import io from "socket.io-client"
+import typingIcon from "../utils/Icons.json"
+
 
 const ENDPOINT = "http://localhost:5000";
 let socket, selectedChatCompare
@@ -20,7 +22,8 @@ function SingleChat() {
     const [searchResults, setSearchResults] = useState([])
     const [loading, setLoading] = useState(false)
     const [selectedUsers, setSelectedUsers] = useState([]);
-
+    const [typing, setTyping] = useState(false);
+    const [istyping, setIsTyping] = useState(false);
 
     //messages
     const [messages, setMessages] = useState([]);
@@ -98,6 +101,8 @@ function SingleChat() {
         socket = io(ENDPOINT);
         socket.emit("setup", user);
         socket.on("connected", () => setSocketConnected(true));
+        socket.on("typing", () => setIsTyping(true));
+        socket.on("stop typing", () => setIsTyping(false));
 
         // eslint-disable-next-line
     }, []);
@@ -253,6 +258,21 @@ function SingleChat() {
 
     const typingHandler = async (e) => {
         setNewMessage(e.target.value)
+        if (!socketConnected) return
+        if (!typing) {
+            setTyping(true);
+            socket.emit("typing", selectedChat._id);
+        }
+        let lastTypingTime = new Date().getTime();
+        var timerLength = 3000;
+        setTimeout(() => {
+          var timeNow = new Date().getTime();
+          var timeDiff = timeNow - lastTypingTime;
+          if (timeDiff >= timerLength && typing) {
+            socket.emit("stop typing", selectedChat._id);
+            setTyping(false);
+          }
+        }, timerLength);
     }
 
 
@@ -283,6 +303,7 @@ function SingleChat() {
                         <ScrollableChat messages={messages} />
                     </div>
                 </div>
+                {istyping ? "Typing":""}
                 <textarea style={{ width: "100%", height: "16vh" }} placeholder='type here' onKeyDown={sendMesageFun} onChange={typingHandler} value={newMessage} />
             </div>}
 
@@ -343,8 +364,8 @@ function SingleChat() {
                 </Modal.Body>
             </Modal>
             <ToastContainer />
-            {loading && <div class="spinner-border" role="status">
-                <span class="visually-hidden">Loading...</span>
+            {loading && <div className="spinner-border" role="status">
+                <span className="visually-hidden">Loading...</span>
             </div>}
         </div>
     )

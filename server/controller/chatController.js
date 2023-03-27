@@ -35,7 +35,7 @@ exports.accessChat = async (req, res, next) => {
 
         try {
             const createdChat = await Chat.create(chatData);
-            const FullChat = await Chat.findOne({ _id: createdChat._id })
+            let FullChat = await Chat.findOne({ _id: createdChat._id })
             FullChat = await FullChat.populate(
                 "users"
             );

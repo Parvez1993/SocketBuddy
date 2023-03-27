@@ -6,7 +6,7 @@ const userModel = mongoose.Schema({
   name: { type: "String", trim: true },
   email: { type: "String", trim: true },
   password: { type: "String", trim: true },
-  pic: { type: "String", default: "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg", required: true },
+  pic: { type: "String", default: "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg" },
 }, {
   timestamp: true
 })
