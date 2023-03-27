@@ -14,7 +14,7 @@ const signToken = (id) => {
 const createSendToken = async (user, statusCode, req, res) => {
     const token = signToken(user._id);
     const cookieOptions = {
-        maxAge: 1000 * 60 * 15,
+        maxAge: 300000 * 60 * 15,
         httpOnly: true,
       };
     

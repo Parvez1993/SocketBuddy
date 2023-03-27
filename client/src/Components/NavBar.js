@@ -1,12 +1,14 @@
 import React from 'react'
 import { Button, Container, Dropdown, Image, Nav, Navbar } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
+import { useChatStore } from '../Context/ChatProvider'
+import { getSender } from '../utils/ChatLogics'
 import Profile from './Profile'
 
 
 function NavBar({ handleShow, user }) {
     const navigate = useNavigate()
-
+    const { notifications } = useChatStore()
     const handleLogout = () => {
         localStorage.removeItem('userInfo')
         navigate('/')
@@ -39,7 +41,7 @@ function NavBar({ handleShow, user }) {
                         <div className='d-flex'>
                             <Dropdown>
                                 <Dropdown.Toggle variant="success" id="dropdown-basic" style={{ background: "none", border: "none" }}>
-                                    <Image roundedCircle src={user?.pic} alt={user?.name} width="30px" />
+                                    <Image roundedCircle src={user?.pic} alt={user?.name} width="30px" id="dropdown-basic" />
                                 </Dropdown.Toggle>
 
 
@@ -48,10 +50,33 @@ function NavBar({ handleShow, user }) {
                                     <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown>
-                            <button type="button" class="icon-button">
-                                <span className="material-icons">notifications</span>
-                                <span className="icon-button__badge">2</span>
-                            </button>
+
+
+                            <Dropdown>
+
+                                <Dropdown.Toggle variant="success" id="dropdown-basic1" style={{ background: "none", border: "none" }}>
+                                    <button type="button" className="icon-button" id="dropdown-basic1">
+                                        <span className="material-icons">notifications</span>
+                                        <span className="icon-button__badge">{notifications.length > 0 ? notifications.length : "0"}</span>
+                                    </button>
+                                </Dropdown.Toggle>
+
+
+
+
+
+                                {notifications.length > 0 ?
+                                <Dropdown.Menu style={{ left: "-97px" }}>  {notifications?.map(notif=><Dropdown.Item>
+                                    <Dropdown.Menu key={notif._id}>
+                                        {notif.chat.isGroupChat ? `New message in ${notif.chat.chatName}`:`New message in ${getSender(user,notif.chat.users)})}`}
+                                    </Dropdown.Menu>
+                                </Dropdown.Item>)}</Dropdown.Menu>
+                               
+                                    : <Dropdown.Menu style={{ left: "-97px" }}><Dropdown.Item>No new notifications</Dropdown.Item>No new notification</Dropdown.Menu>}
+                                    
+                                    
+                           
+                            </Dropdown>
                         </div>
                     </Nav>
 

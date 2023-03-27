@@ -9,7 +9,7 @@ export const ChatProvider = ({ children }) => {
     const [selectedChat, setSelectedChat] = useState("")
     const [chats, setChats] = useState("")
     const [fetchAgain, setFetchAgain] = useState(false)
-
+    const [notifications, setNotifications] = useState("")
 
     const navigate = useNavigate();
 
@@ -30,7 +30,10 @@ export const ChatProvider = ({ children }) => {
         setSelectedChat,
         chats,
         setChats,
-        fetchAgain, setFetchAgain
+        fetchAgain, 
+        setFetchAgain,
+        notifications, 
+        setNotifications
     }
     return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>
 }

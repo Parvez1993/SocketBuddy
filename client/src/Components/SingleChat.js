@@ -15,13 +15,11 @@ const ENDPOINT = "http://localhost:5000";
 let socket, selectedChatCompare
 
 function SingleChat() {
-    const { selectedChat, fetchAgain, setFetchAgain, user, setSelectedChat } = useChatStore()
+    const { selectedChat, fetchAgain, setFetchAgain, user, setSelectedChat,notifications,  setNotifications } = useChatStore()
     const [show, setShow] = useState(false);
     const [groupName, setGroupName] = useState("")
-    const [users, setUsers] = useState([])
     const [searchResults, setSearchResults] = useState([])
     const [loading, setLoading] = useState(false)
-    const [selectedUsers, setSelectedUsers] = useState([]);
     const [typing, setTyping] = useState(false);
     const [istyping, setIsTyping] = useState(false);
 
@@ -96,6 +94,8 @@ function SingleChat() {
     };
 
 
+    console.log("notificationssssssssssss", notifications)
+
 
     useEffect(() => {
         socket = io(ENDPOINT);
@@ -121,7 +121,10 @@ function SingleChat() {
                 !selectedChatCompare || // if chat is not selected or doesn't match current chat
                 selectedChatCompare._id !== newMessageRecieved.chat._id
             ) {
-                return
+                if(!notifications.includes(newMessageRecieved)){
+                    setNotifications([newMessageRecieved, ...notifications]);
+                    setFetchAgain(!fetchAgain)
+                }
             } else {
                 setMessages([...messages, newMessageRecieved]);
             }

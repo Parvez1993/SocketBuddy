@@ -131,3 +131,7 @@ body{
   overflow-y: scroll;
   scrollbar-width: none;
 }
+
+.dropdown-toggle::after {
+    display: none !important; 
+  }
